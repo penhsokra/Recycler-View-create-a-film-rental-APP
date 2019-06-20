@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import filmrental.sokra.com.filmrental.DetailActivity;
 import filmrental.sokra.com.filmrental.EditActivity;
 import filmrental.sokra.com.filmrental.MainActivity;
 import filmrental.sokra.com.filmrental.R;
@@ -29,9 +30,12 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
     private List<Film> filmList;
     private AppCompatActivity context;
     public static final int EDIT_REQUEST_CODE=222;
+    public static int currentPosition;
+    public getCurrentPosition listener;
     public FilmAdapter(List<Film> filmList, AppCompatActivity context) {
         this.filmList = filmList;
         this.context = context;
+        this.listener=(getCurrentPosition) context;
     }
 
     @NonNull
@@ -50,6 +54,18 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
         viewholder.description.setText(film.getDescription());
         viewholder.viewCount.setText(film.getViewCount());
         viewholder.btnOption.setImageResource(film.getBtnOption());
+
+        viewholder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toDetail = new Intent(context,DetailActivity.class);
+                Film film1 = filmList.get(viewholder.getAdapterPosition());
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("data",film);
+                toDetail.putExtras(bundle);
+                context.startActivity(toDetail);
+            }
+        });
 
         viewholder.btnOption.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,11 +87,12 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
                                 bundle.putParcelable("data",film1);
                                 intent.putExtras(bundle);
                                 context.startActivityForResult(intent,EDIT_REQUEST_CODE);
-
+                                if(listener!=null)
+                                    listener.getCurrentPosition(viewholder.getAdapterPosition());
                                 return true;
                             case  R.id.remove:
                                 //removeRecyclerViewItem();
-                                int currentPosition = viewholder.getAdapterPosition();
+                                currentPosition = viewholder.getAdapterPosition();
                                 filmList.remove(currentPosition);
                                 notifyItemRemoved(currentPosition);
                                 notifyItemRangeChanged(currentPosition, filmList.size());
@@ -106,7 +123,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
-
             title = itemView.findViewById(R.id.txtTitle);
             description = itemView.findViewById(R.id.txtDescription);
             viewCount = itemView.findViewById(R.id.txtCount);
@@ -116,15 +132,18 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
     }
     /*
      private void removeRecyclerViewItem(){
-        int newPosition = viewholder.getAdapterPosition();
-        filmList.remove(newPosition);
-        notifyItemRemoved(newPosition);
-        notifyItemRangeChanged(newPosition, filmList.size());
+
     }*/
 
-    /*
+   /*
     private void editRecyclerViewItem(){
 
-
     }*/
+
+    public interface getCurrentPosition{
+        void getCurrentPosition(int position);
+    }
+    public void setListener(getCurrentPosition listener){
+        this.listener=listener;
+    }
 }

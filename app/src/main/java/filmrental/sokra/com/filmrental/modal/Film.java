@@ -1,8 +1,10 @@
 package filmrental.sokra.com.filmrental.modal;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 
-public class Film {
+public class Film implements Parcelable {
     private String title;
     private String description;
     private String viewCount;
@@ -17,6 +19,26 @@ public class Film {
         this.btnOption = btnOption;
 
     }
+
+    protected Film(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        viewCount = in.readString();
+        btnOption = in.readInt();
+        filmImage = in.readInt();
+    }
+
+    public static final Creator<Film> CREATOR = new Creator<Film>() {
+        @Override
+        public Film createFromParcel(Parcel in) {
+            return new Film(in);
+        }
+
+        @Override
+        public Film[] newArray(int size) {
+            return new Film[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -56,5 +78,19 @@ public class Film {
 
     public void setFilmImage(int filmImage) {
         this.filmImage = filmImage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(viewCount);
+        dest.writeInt(btnOption);
+        dest.writeInt(filmImage);
     }
 }
