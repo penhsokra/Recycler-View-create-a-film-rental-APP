@@ -1,29 +1,27 @@
 package filmrental.sokra.com.filmrental;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import filmrental.sokra.com.filmrental.adapter.FilmAdapter;
 import filmrental.sokra.com.filmrental.modal.Film;
-
 public class MainActivity extends AppCompatActivity implements FilmAdapter.getCurrentPosition{
+    private TextView checkrst;
     private RecyclerView rlvFilmBox;
     private int itemPosition;
     private List<Film> filmList = new ArrayList<>();
@@ -31,6 +29,9 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
     public static  final int ADD_REQUEST_CODE=111;
     public static final int EDIT_REQUEST_CODE=222;
     FloatingActionButton btnAdd;
+    private boolean isLoading;
+    private int currentPage=1;
+    private int totalPage =10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +41,12 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
         intiUI();
         getResult();
         addNew();
-
+        newFilm.addAll(filmList);
+        filmAdapter.notifyDataSetChanged();
     }
 
     private void addNew(){
-        btnAdd = findViewById(R.id.btnAdd);
+        btnAdd = findViewById(R.id.btnSave);
        btnAdd.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
         rlvFilmBox.setLayoutManager(new LinearLayoutManager(this));
         filmAdapter = new FilmAdapter(filmList,this);
         rlvFilmBox.setAdapter(filmAdapter);
+
     }
 
     private void getResult(){
@@ -78,43 +81,36 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
                 doSearch(s);
                 return true;
             }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
         });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                filmList.clear();
-                filmList.addAll(oldFilm);
-                filmAdapter.notifyDataSetChanged();
-                return false;
-            }
-        });
-
         return true;
     }
-    List<Film> oldFilm = new ArrayList<>();
-    private void doSearch(String s){
-        if(s.isEmpty()){
-            return;
+    List<Film> newFilm = new ArrayList<>();
+    private void doSearch(String newText){
+        newText = newText.toLowerCase();
+        checkrst = findViewById(R.id.checkrst);
+        if(newText.isEmpty()){
+            checkrst.setVisibility(View.GONE);
+            filmList.addAll(newFilm);
         }
         filmList.clear();
-        for(Film film:oldFilm){
-            if (film.getTitle().contains(s)){
+        for(Film film : newFilm){
+            if (film.getTitle().toLowerCase().contains(newText)){
                 filmList.add(film);
             }
+            checkrst.setVisibility(View.GONE);
         }
         if (filmList.size()==0){
-            Toast.makeText(this, "No data match 1", Toast.LENGTH_SHORT).show();
+            checkrst.setVisibility(View.VISIBLE);
             filmAdapter.notifyDataSetChanged();
         }
+        filmAdapter.notifyDataSetChanged();
 
     }
 

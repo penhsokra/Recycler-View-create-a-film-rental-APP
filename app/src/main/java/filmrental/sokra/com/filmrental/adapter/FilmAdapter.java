@@ -23,10 +23,7 @@ import filmrental.sokra.com.filmrental.EditActivity;
 import filmrental.sokra.com.filmrental.MainActivity;
 import filmrental.sokra.com.filmrental.R;
 import filmrental.sokra.com.filmrental.modal.Film;
-
-
 public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
-    private int itemPosition;
     private List<Film> filmList;
     private AppCompatActivity context;
     public static final int EDIT_REQUEST_CODE=222;
@@ -130,20 +127,9 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
             filmImage = itemView.findViewById(R.id.filmImage);
         }
     }
-    /*
-     private void removeRecyclerViewItem(){
-
-    }*/
-
-   /*
-    private void editRecyclerViewItem(){
-
-    }*/
 
     public interface getCurrentPosition{
         void getCurrentPosition(int position);
     }
-    public void setListener(getCurrentPosition listener){
-        this.listener=listener;
-    }
+
 }
