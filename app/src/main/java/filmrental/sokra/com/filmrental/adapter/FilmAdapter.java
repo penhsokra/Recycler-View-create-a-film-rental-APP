@@ -86,15 +86,19 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
                                 context.startActivityForResult(intent,EDIT_REQUEST_CODE);
                                 if(listener!=null)
                                     listener.getCurrentPosition(viewholder.getAdapterPosition());
+
                                 return true;
                             case  R.id.remove:
                                 //removeRecyclerViewItem();
+
                                 currentPosition = viewholder.getAdapterPosition();
                                 filmList.remove(currentPosition);
                                 notifyItemRemoved(currentPosition);
                                 notifyItemRangeChanged(currentPosition, filmList.size());
                                 Toast.makeText(context, "Removed "+currentPosition, Toast.LENGTH_SHORT).show();
                                 return true;
+
+
                             default:return false;
                         }
                     }

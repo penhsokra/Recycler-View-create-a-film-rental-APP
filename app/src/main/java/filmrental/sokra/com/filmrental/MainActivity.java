@@ -29,13 +29,10 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
     public static  final int ADD_REQUEST_CODE=111;
     public static final int EDIT_REQUEST_CODE=222;
     FloatingActionButton btnAdd;
-    private boolean isLoading;
-    private int currentPage=1;
-    private int totalPage =10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);//will hide the title
         setContentView(R.layout.activity_main);
 
         intiUI();
