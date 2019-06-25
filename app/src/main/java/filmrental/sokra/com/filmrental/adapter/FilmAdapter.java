@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -23,16 +24,16 @@ import filmrental.sokra.com.filmrental.EditActivity;
 import filmrental.sokra.com.filmrental.MainActivity;
 import filmrental.sokra.com.filmrental.R;
 import filmrental.sokra.com.filmrental.modal.Film;
-public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
+public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder>{
     private List<Film> filmList;
     private AppCompatActivity context;
     public static final int EDIT_REQUEST_CODE=222;
-    public static int currentPosition;
-    public getCurrentPosition listener;
+
+    public actionOnCurrentPosition listener;
     public FilmAdapter(List<Film> filmList, AppCompatActivity context) {
         this.filmList = filmList;
         this.context = context;
-        this.listener=(getCurrentPosition) context;
+        this.listener =(actionOnCurrentPosition) context;
     }
 
     @NonNull
@@ -75,7 +76,11 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        switch (item.getItemId()){
+                        if(listener!=null) {
+                            listener.actionOnCurrentPosition(viewholder.getAdapterPosition(),item.getItemId());
+                        }
+
+                        /*switch (item.getItemId()){
                             case R.id.edit:
                                 //editRecyclerViewItem();
                                 Intent intent = new Intent(context,EditActivity.class);
@@ -84,23 +89,20 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
                                 bundle.putParcelable("data",film1);
                                 intent.putExtras(bundle);
                                 context.startActivityForResult(intent,EDIT_REQUEST_CODE);
-                                if(listener!=null)
-                                    listener.getCurrentPosition(viewholder.getAdapterPosition());
-
+                                if(listener!=null) {
+                                    listener.getCurrentPosition(viewholder.getAdapterPosition(),item.getItemId());
+                                }
                                 return true;
                             case  R.id.remove:
-                                //removeRecyclerViewItem();
-
-                                currentPosition = viewholder.getAdapterPosition();
-                                filmList.remove(currentPosition);
-                                notifyItemRemoved(currentPosition);
-                                notifyItemRangeChanged(currentPosition, filmList.size());
-                                Toast.makeText(context, "Removed "+currentPosition, Toast.LENGTH_SHORT).show();
+                                filmList.remove(viewholder.getAdapterPosition());
+                                notifyItemRemoved(viewholder.getAdapterPosition());
+                                notifyItemRangeChanged(viewholder.getAdapterPosition(), filmList.size());
+                                Toast.makeText(context, "Removed "+viewholder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
                                 return true;
-
-
                             default:return false;
-                        }
+                        }*/
+
+                       return true;
                     }
                 });
 
@@ -132,8 +134,8 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.Viewholder> {
         }
     }
 
-    public interface getCurrentPosition{
-        void getCurrentPosition(int position);
+    public interface actionOnCurrentPosition{
+        void actionOnCurrentPosition(int position, @IdRes int actionID);
     }
 
 }

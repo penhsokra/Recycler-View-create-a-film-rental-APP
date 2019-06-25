@@ -14,13 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import filmrental.sokra.com.filmrental.adapter.FilmAdapter;
 import filmrental.sokra.com.filmrental.modal.Film;
-public class MainActivity extends AppCompatActivity implements FilmAdapter.getCurrentPosition{
+public class MainActivity extends AppCompatActivity implements FilmAdapter.actionOnCurrentPosition{
     private TextView checkrst;
     private RecyclerView rlvFilmBox;
     private int itemPosition;
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
                 Film film = data.getParcelableExtra("data");
                 this.filmList.set(this.itemPosition, film);
                 filmAdapter.notifyItemChanged(itemPosition);
+
             }else if(ADD_REQUEST_CODE == requestCode && resultCode == RESULT_OK){
                 Film film = data.getParcelableExtra("data");
                 this.filmList.add(0,film);
@@ -128,7 +130,26 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.getCu
     }
 
     @Override
-    public void getCurrentPosition(int position) {
-        this.itemPosition=position;
+    public void actionOnCurrentPosition(int position, int actionID) {
+        this.itemPosition = position;
+        switch (actionID){
+            case R.id.edit:
+                Intent intent = new Intent(this,EditActivity.class);
+                Film film1=filmList.get(position);
+                Bundle bundle=new Bundle();
+                bundle.putParcelable("data",film1);
+                intent.putExtras(bundle);
+                startActivityForResult(intent,EDIT_REQUEST_CODE);
+                Toast.makeText(this, "Edit "+this.itemPosition, Toast.LENGTH_SHORT).show();
+                return;
+            case R.id.remove:
+                filmList.remove(position);
+                filmAdapter.notifyItemRemoved(position);
+                filmAdapter.notifyItemRangeChanged(position, filmList.size());
+                Toast.makeText(this, "Remove "+this.itemPosition, Toast.LENGTH_SHORT).show();
+                return;
+             default:
+                 return;
+        }
     }
 }
